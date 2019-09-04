@@ -22,9 +22,10 @@ def create_pool(cluster,pool_name):
     else:
         cluster.create_pool(pool_name)
     ioctx = cluster.open_ioctx(pool_name)
+    return ioctx
 def listpool(cluster):
     pools=cluster.list_pools()
-    print("pools {pool}.format(pool=pools)")
+    print("pools {pool}".format(pool=pools))
 def deletepool(self,pool_name):
     pass
 def createimage(size,ioctx,imagename):
@@ -32,7 +33,7 @@ def createimage(size,ioctx,imagename):
     rbd_inst.create(ioctx,imagename,size)
     img_list = rbd_inst.list(ioctx)
     print("after create images {0}".format(img_list))
-    return rbd
+    return rbd_inst
 def createsnapshot(ioctx):
     pass
 # def delrbd(rbd,ioctx):
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     ioctx=create_pool(cluster,"rbd")
     listpool(cluster)
     size= 1*1024*4
-    createimage(size,ioctx,"ljw-test")
+    rbd=createimage(size,ioctx,"ljw-test")
     ioctx.close()
     cluster.shutdown()
 
