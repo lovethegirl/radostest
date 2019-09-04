@@ -34,8 +34,14 @@ def createimage(size,ioctx,imagename):
     img_list = rbd_inst.list(ioctx)
     print("after create images {0}".format(img_list))
     return rbd_inst
-def createsnapshot(ioctx):
-    pass
+def createsnapshot(ioctx,imagename,snap):
+    rbd_img=rbd.Image(ioctx,name=imagename)
+    rbd_img.create(snap)
+    print("snap list")
+    snap_list=rbd_img.list_snaps()
+    for item in snap_list:
+        print(item['name'])
+    
 # def delrbd(rbd,ioctx):
 #     rbd.remove(ioctx,IMG)
 #     rbd.remove(ioctx,CLN)
@@ -47,6 +53,7 @@ if __name__ == "__main__":
     listpool(cluster)
     size= 1*1024*4
     rbd=createimage(size,ioctx,"ljw-test")
+    createsnapshot(ioctx,"ljw-test","ljw-test@snapname")
     ioctx.close()
     cluster.shutdown()
 

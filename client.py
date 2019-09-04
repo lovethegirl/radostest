@@ -14,8 +14,8 @@ except Exception as e:
         print("connection error: ", e)
         raise e
 finally:
-        print "Connected to the cluster."
-print ("\n\nI/O Context and Object Operations")
+        print("Connected to the cluster.")
+print("\n\nI/O Context and Object Operations")
 print("=================================")
 
 print ("\nCreating a context for the 'pool1' pool")
@@ -34,11 +34,11 @@ ioctx.set_xattr("hw", "lang", "en_US")
 # print "Writing XATTR 'lang' with value 'fr_FR' to object 'bm'"
 # ioctx.set_xattr("bm", "lang", "fr_FR")
 
-print ("\nContents of object 'hw'\n------------------------")
-print ioctx.read("hw")
+print("\nContents of object 'hw'\n------------------------")
+print(ioctx.read("hw"))
 
-print ("\n\nGetting XATTR 'lang' from object 'hw'")
-print ioctx.get_xattr("hw", "lang")
+print("\n\nGetting XATTR 'lang' from object 'hw'")
+print(ioctx.get_xattr("hw", "lang"))
 
 # print "\nContents of object 'bm'\n------------------------"
 # print ioctx.read("bm")
@@ -47,7 +47,7 @@ print ioctx.get_xattr("hw", "lang")
 # print ioctx.get_xattr("bm", "lang")
 
 
-print ("\nRemoving object 'hw'")
+print("\nRemoving object 'hw'")
 ioctx.remove_object("hw")
 
 # print "Removing object 'bm'"
