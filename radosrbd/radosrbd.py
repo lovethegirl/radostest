@@ -42,34 +42,66 @@ def createsnapshot(ioctx,imagename,snap):
     for item in snap_list:
         print(item['name'])
     return rbd_img
+#delete snapshot
 def purgesnap(rbd_img,snp):
     print("remove snapshot")
     rbd_img.remove_snap(snp)
 def closeimg(rbd_img):
     rbd_img.close()
+# rbd_inst handle
 def delimg(ioctx,rbd_inst,imagename):
-    print("remove rbd image")
+    print("remove {0} image".format(imagename))
     rbd_inst.remove(ioctx,imagename)    
-# def delrbd(rbd,ioctx):
-#     rbd.remove(ioctx,IMG)
-#     rbd.remove(ioctx,CLN)
+# clone image from snapshot
+# ioctx pool context
+# rbd_inst cluster handle
+# rbd_img image handle
+# snap snapshot name
+# cloing cloneimage name
+def cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,cloimg):
+    print("protect snapshot")
+    rbd_img.protect_snap(snap)
+    status = rbd_img.is_protected_snap(snap)
+    print("{0} protected status is {1}".format(snap,status))
+
+    print("start clone image")
+    rbd_inst.clone(ioctx,imagename,snap,ioctx,cloimg)
+    img_list = rbd_inst.list(ioctx)
+    clone_img = rbd.Image(ioctx,name=cloimg)
+    print("clone_img {0}".format(img_list))
+    clone_img.flatten()
+    rbd_img.unprotect_snap(snap)
+    status = rbd_img.is_protected_snap(snap)
+    print("{0} protected status is {1}".format(snap,status))
+    return clone_img,img_list
+
+
 if __name__ == "__main__":
-    ceph_conf_path = "/etc/ceph/ceph.conf"    
+    ceph_conf_path = "/etc/ceph/ceph.conf"  
+    poolname="rbd"
+    imagename="ljw-test"
+    snap="ljw-test@snapname"
+    clonename="ljw-test-clone"
     cluster = createhandle(ceph_conf_path)#cluster handle
     try:
         connent_ceph(cluster)
-        ioctx=create_pool(cluster,"rbd")#pool context
+        ioctx=create_pool(cluster,poolname)#pool context
         try:
             listpool(cluster)
             size= 1*1024*4
-            rbd_inst=createimage(size,ioctx,"ljw-test")#create image
+            rbd_inst=createimage(size,ioctx,imagename)#create image
             try:
-                rbd_img=createsnapshot(ioctx,"ljw-test","ljw-test@snapname")
+                rbd_img=createsnapshot(ioctx,imagename,snap)
+                try:
+                    clone_img,mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
+                finally:
+                    closeimg(clone_img)
+                    delimg(ioctx,rbd_inst,cloneimage)
             finally:
-                purgesnap(rbd_img,"ljw-test@snapname")
+                purgesnap(rbd_img,snap)
         finally:
             closeimg(rbd_img)
-            delimg(ioctx,rbd_inst,"ljw-test")
+            delimg(ioctx,rbd_inst,imagename)
     finally:
         ioctx.close()
         print("ioctx close")
