@@ -72,7 +72,9 @@ if __name__ == "__main__":
             delimg(ioctx,rbd_inst,"ljw-test")
     finally:
         ioctx.close()
+        print("ioctx close")
     cluster.shutdown()
+    print("cluster close")
 
 
 
