@@ -94,8 +94,8 @@ if __name__ == "__main__":
                 rbd_img=createsnapshot(ioctx,imagename,snap)
                 try:
                     clone_img,mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
-                finally:
                     closeimg(clone_img)
+                finally:
                     delimg(ioctx,rbd_inst,cloneimage)
             finally:
                 purgesnap(rbd_img,snap)
