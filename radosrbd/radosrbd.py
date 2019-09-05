@@ -96,7 +96,7 @@ if __name__ == "__main__":
                     clone_img,mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
                     closeimg(clone_img)
                 finally:
-                    delimg(ioctx,rbd_inst,cloneimage)
+                    delimg(ioctx,rbd_inst,clonename)
             finally:
                 purgesnap(rbd_img,snap)
         finally:
