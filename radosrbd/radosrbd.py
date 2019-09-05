@@ -36,7 +36,7 @@ def createimage(size,ioctx,imagename):
     return rbd_inst
 def createsnapshot(ioctx,imagename,snap):
     rbd_img=rbd.Image(ioctx,name=imagename)
-    rbd_img.create(snap)
+    rbd_img.create_snap(snap)
     print("snap list")
     snap_list=rbd_img.list_snaps()
     for item in snap_list:
@@ -54,18 +54,24 @@ def delimg(ioctx,rbd_inst,imagename):
 #     rbd.remove(ioctx,IMG)
 #     rbd.remove(ioctx,CLN)
 if __name__ == "__main__":
-    ceph_conf_path = "/etc/ceph/ceph.conf"
+    ceph_conf_path = "/etc/ceph/ceph.conf"    
     cluster = createhandle(ceph_conf_path)#cluster handle
-    connent_ceph(cluster)
-    ioctx=create_pool(cluster,"rbd")#pool context
-    listpool(cluster)
-    size= 1*1024*4
-    rbd_inst=createimage(size,ioctx,"ljw-test")#create image
-    rbd_img=createsnapshot(ioctx,"ljw-test","ljw-test@snapname")
-    purgesnap(rbd_img,"ljw-test@snapname")
-    closeimg(rbd_img)
-    delimg(ioctx,rbd_inst,"ljw-test")
-    ioctx.close()
+    try:
+        connent_ceph(cluster)
+        ioctx=create_pool(cluster,"rbd")#pool context
+        try:
+            listpool(cluster)
+            size= 1*1024*4
+            rbd_inst=createimage(size,ioctx,"ljw-test")#create image
+            try:
+                rbd_img=createsnapshot(ioctx,"ljw-test","ljw-test@snapname")
+            finally:
+                purgesnap(rbd_img,"ljw-test@snapname")
+        finally:
+            closeimg(rbd_img)
+            delimg(ioctx,rbd_inst,"ljw-test")
+    finally:
+        ioctx.close()
     cluster.shutdown()
 
 
