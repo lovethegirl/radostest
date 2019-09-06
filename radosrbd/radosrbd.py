@@ -44,7 +44,7 @@ def createsnapshot(ioctx,imagename,snap):
     return rbd_img
 #delete snapshot
 def purgesnap(rbd_img,snp):
-    print("remove snapshot")
+    print("remove {sap}".format(snp=snp))
     rbd_img.remove_snap(snp)
 def closeimg(rbd_img):
     rbd_img.close()
@@ -75,13 +75,7 @@ def cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,cloimg):
     print("{0} protected status is {1}".format(snap,status))
     return clone_img,img_list
 
-
-if __name__ == "__main__":
-    ceph_conf_path = "/etc/ceph/ceph.conf"  
-    poolname="rbd"
-    imagename="ljw-test"
-    snap="ljw-test@snapname"
-    clonename="ljw-test-clone"
+def __main(conf_conf_path,poolname,imagename,snap,clonename):
     cluster = createhandle(ceph_conf_path)#cluster handle
     try:
         connent_ceph(cluster)
@@ -93,7 +87,7 @@ if __name__ == "__main__":
             try:
                 rbd_img=createsnapshot(ioctx,imagename,snap)
                 try:
-                    clone_img,mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
+                    clone_img, mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
                     closeimg(clone_img)
                 finally:
                     delimg(ioctx,rbd_inst,clonename)
@@ -107,6 +101,13 @@ if __name__ == "__main__":
         print("ioctx close")
     cluster.shutdown()
     print("cluster close")
+if __name__ == "__main__":
+    ceph_conf_path = "/etc/ceph/ceph.conf"  
+    poolname="rbd"
+    imagename="ljw-test"
+    snap="ljw-test@snapname"
+    clonename="ljw-test-clone"
+    __main(ceph_conf_path,poolname,imagename,snap,clonename)
 
 
 
