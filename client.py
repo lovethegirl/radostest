@@ -1,5 +1,5 @@
 import rados
-
+import rbd
 try:
         cluster = rados.Rados(conffile='/etc/ceph/ceph.conf')
 except TypeError as e:
