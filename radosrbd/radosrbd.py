@@ -108,28 +108,20 @@ if __name__ == "__main__":
     snap="ljw-test@snapname"
     clonename="ljw-test-clone"
     cluster = createhandle(ceph_conf_path)#cluster handle
-    try:
-        connent_ceph(cluster)
-        ioctx=create_pool(cluster,poolname)#pool context
-        try:
-            listpool(cluster)
-            size= 1*1024*4
-            rbd_inst=createimage(size,ioctx,imagename)#create image
-            try:
-                rbd_img=createsnapshot(ioctx,imagename,snap)
-                try:
-                    clone_img, mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
-                    closeimg(clone_img)
-                finally:
-                    delimg(ioctx,rbd_inst,clonename)
-            finally:
-                purgesnap(rbd_img,snap)
-        finally:
-            closeimg(rbd_img)
-            delimg(ioctx,rbd_inst,imagename)
-    finally:
-        ioctx.close()
-        print("ioctx close")
+    connent_ceph(cluster)
+    ioctx=create_pool(cluster,poolname)#pool context
+    listpool(cluster)
+    size= 1*1024*4
+    rbd_inst=createimage(size,ioctx,imagename)#create image
+    rbd_img=createsnapshot(ioctx,imagename,snap)
+    clone_img, mg_list=cloneimage(ioctx,rbd_inst,rbd_img,imagename,snap,clonename)
+    closeimg(clone_img)
+    delimg(ioctx,rbd_inst,clonename)
+    purgesnap(rbd_img,snap)
+    closeimg(rbd_img)
+    delimg(ioctx,rbd_inst,imagename)
+    ioctx.close()
+    print("ioctx close")
     cluster.shutdown()
     print("cluster close")
 
