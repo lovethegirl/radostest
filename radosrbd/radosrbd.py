@@ -127,8 +127,8 @@ if __name__ == "__main__":
         finally:
             closeimg(rbd_img)
             delimg(ioctx,rbd_inst,imagename)
+            ioctx.close()
     finally:
-        ioctx.close()
         print("ioctx close")
     cluster.shutdown()
     print("cluster close")
