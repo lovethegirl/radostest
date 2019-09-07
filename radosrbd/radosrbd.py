@@ -93,8 +93,9 @@ def __main(conf_conf_path,poolname,imagename,snap,clonename):
                     delimg(ioctx,rbd_inst,clonename)
             finally:
                 purgesnap(rbd_img,snap)
+                closeimg(rbd_img)
         finally:
-            closeimg(rbd_img)
+            # closeimg(rbd_img)
             delimg(ioctx,rbd_inst,imagename)
     finally:
         ioctx.close()
