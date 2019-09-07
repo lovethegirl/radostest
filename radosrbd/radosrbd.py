@@ -44,7 +44,7 @@ def createsnapshot(ioctx,imagename,snap):
     return rbd_img
 #delete snapshot
 def purgesnap(rbd_img,snp):
-    print("remove {sap}".format(snp=snp))
+    print("remove {snp}".format(snp=snp))
     rbd_img.remove_snap(snp)
 def closeimg(rbd_img):
     rbd_img.close()
@@ -94,9 +94,11 @@ def __main(conf_conf_path,poolname,imagename,snap,clonename):
             finally:
                 purgesnap(rbd_img,snap)
                 closeimg(rbd_img)
+                delimg(ioctx,rbd_inst,imagename)
         finally:
+            pass
             # closeimg(rbd_img)
-            delimg(ioctx,rbd_inst,imagename)
+            #delimg(ioctx,rbd_inst,imagename)
     finally:
         ioctx.close()
         print("ioctx close")
